@@ -15,7 +15,7 @@ class LogicCreator(object):
     def compute_excel_logic(self):
         random_sheet_number = self.generate_random_sheet()
         sheet_name_selected = "Sheet" + str(random_sheet_number)
-        #header=None in order to also use the first row of the excel
+        # header=None in order to also use the first row of the excel
         dataframe = pd.read_excel(self.excelfile, sheet_name=sheet_name_selected, header=None)
         print(dataframe)
         dict_index_value = {}
@@ -40,4 +40,7 @@ class LogicCreator(object):
 
     def extract_entry_number(self, entry_string):
         list_string = entry_string.split("entry")
+        print(list_string)
+        if list_string[1] == '':
+            return "1"
         return "".join(list_string[1])

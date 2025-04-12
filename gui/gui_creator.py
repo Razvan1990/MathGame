@@ -183,15 +183,15 @@ class CreateGui(object):
             label_name = "Label" + str(number)
             globals()[label_name] = label_name
             label_name = Label(label_frame_numbers, text=str(number), justify="center",
-                               font=("Helvetica", 18, "bold"),
+                               font=("Helvetica", 16, "bold"),
                                cursor="trek", fg="#433950", bg="#b7cb83")
             self.labels_numbers_list.append(label_name)
-            label_name.grid(row=0, column=index_column, padx=20)
+            label_name.grid(row=0, column=index_column, padx=5, sticky=tkinter.NE)
             index_column += 1
         # create button for check
         button_check = Button(label_frame_numbers, text="CHECK", foreground="#e1fdff", bg="#20123a",
                               padx=5, pady=5, font=("Georgia", "9", "bold"), command=lambda: self.check_value(),
-                              bd=11, state=tkinter.DISABLED)
+                              bd=11, state=tkinter.DISABLED, )
         button_check.grid(row=0, column=0, padx=20)
         for entry in self.list_entries_numbers:
             entry.bind("<KeyRelease>", lambda e: self.check_input())  # check if a key is released

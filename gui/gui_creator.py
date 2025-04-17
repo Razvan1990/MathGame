@@ -19,6 +19,15 @@ class CreateGui(object):
         self.list_entries_numbers = []
         self.list_used_numbers = []
         self.labels_numbers_list = []
+        self.tries_left = 12
+
+    def update_label_tries_color(self, number):
+        if 6 < number <= 9:
+            label_tries_left["bg"] = "#c4e726"
+        elif 3 < number <= 6:
+            label_tries_left["bg"] = "#dca633"
+        elif 0 < number <= 3:
+            label_tries_left["bg"] = "#de4d22"
 
     def check_input(self):
         for entry in self.list_entries_numbers:
@@ -28,6 +37,19 @@ class CreateGui(object):
             # we should have a logic in the list that only one button should be active as per time
             else:
                 button_check["state"] = tkinter.DISABLED
+
+    def stop_game(self, number_tries):
+        # Present a message if number of tries is reached and complete the whole board
+        if number_tries == 0:
+            messagebox.showerror(title="OUT OF TRIES", message="Sorry, you are out of tries left")
+            messagebox.showinfo(title="CHECK BOARD", message="Click OK to see the completed board")
+            # use dictionary_boxes and dict_boxes to make a match
+            for box in self.dict_boxes:
+                if self.dict_boxes[box]["text"] == "" and self.dictionary_boxes[box] != "x":
+                    self.dict_boxes[box].delete(0, END)
+                    self.dict_boxes[box].insert(0, self.dictionary_boxes[box])
+                    self.dict_boxes[box]["state"] = tkinter.DISABLED
+                    button_check["state"] = tkinter.DISABLED
 
     def check_value(self):
         self.check_input()
@@ -53,6 +75,11 @@ class CreateGui(object):
                         int(entry.get()) not in self.list_numbers and int(entry.get()) not in self.list_used_numbers):
                     messagebox.showerror("NOT A VALID NUMBER",
                                          message="Not a valid number! Please check the the allowed numbers from below")
+                    # update tries_left
+                    self.tries_left -= 1
+                    label_tries_left["text"] = "TRIES LEFT: " + str(self.tries_left)
+                    self.update_label_tries_color(self.tries_left)
+                    self.stop_game(self.tries_left)
                     return
 
         '''
@@ -63,6 +90,12 @@ class CreateGui(object):
                 if int(entry.get()) not in self.list_numbers and int(entry.get()) in self.list_used_numbers:
                     messagebox.showerror("NUMBER ALREADY USED",
                                          message="This number has been used, but it is not present anymore")
+                    # update tries_left
+                    self.tries_left -= 1
+                    label_tries_left["text"] = "TRIES LEFT: " + str(self.tries_left)
+                    self.update_label_tries_color(self.tries_left)
+                    self.stop_game(self.tries_left)
+                    return
         '''
         3. value is not the correct one
         '''
@@ -73,6 +106,11 @@ class CreateGui(object):
                     entry_number_string = self.logic_creator.extract_entry_number(entry_string)
                     if entry.get() != str(self.dictionary_boxes[int(entry_number_string)]):
                         messagebox.showerror("INCORRECT VALUE", message="This number is somewhere else")
+                        # update tries_left
+                        self.tries_left -= 1
+                        label_tries_left["text"] = "TRIES LEFT: " + str(self.tries_left)
+                        self.update_label_tries_color(self.tries_left)
+                        self.stop_game(self.tries_left)
                         return
                     else:
                         '''
@@ -99,24 +137,27 @@ class CreateGui(object):
             messagebox.showinfo(title="GAME COMPLETED", message="You have finished the game")
             # create a frame and put it in the label frame
             label_winner = Label(label_frame_numbers, text="CONGRATULATIONS! YOU COMPLETED THE GAME", justify="center",
-                               font=("Helvetica", 18, "bold"), cursor="trek", fg="#37d345", bg="#b7cb83")
+                                 font=("Helvetica", 18, "bold"), cursor="trek", fg="#37d345", bg="#b7cb83")
             label_winner.grid(row=0, column=1)
             button_check["state"] = tkinter.DISABLED
 
     def create_game(self, window):
         global button_check
         global label_frame_numbers
+        global label_tries_left
         # create big title
         label_title = Label(window, text="MATH GAME! GET THE NUMBERS IN PLACE!", bg="#e7ecbb",
                             font=("Comic Sans Ms", 18, "bold"), fg="#4e8cc8")
         label_title.place(x=350, y=100)
         # create entries
         print(self.dictionary_boxes)
-        print(len(self.dictionary_boxes))
         start_value_x = 150
         start_value_y = 250
         x_offset = 125
-
+        # create label left entries
+        label_tries_left = Label(window, text="TRIES LEFT: " + str(self.tries_left), bg="#37d36d",
+                                 font=("Comic Sans Ms", 14, "bold"), fg="#0c0e0d")
+        label_tries_left.place(x=520, y=170)
         for box in self.dictionary_boxes:
             # we do this here to ensure that we have first modified the start values and then we put the entry on the screen
             # the method first done it doesn't work probably due to the fact that we create the widget and then update the values??
